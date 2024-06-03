@@ -1,0 +1,103 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Topic Comments</title> 
+    <style>  
+        .comment-container {  
+            display: flex;  
+            margin-bottom: 20px;  
+        }  
+        .comment-avatar {  
+            width: 50px;  
+            height: 50px;  
+            margin-right: 10px;  
+        }  
+        
+        .comment-avatar img {  
+            width: 100%;  
+            height: 100%;  
+            border-radius: 50%;  
+            object-fit: cover;  
+            border: 1px solid #ccc;  
+            padding: 2px;  
+            border-radius: 50%; /* 如果avatar是圆形图片，可以使用这个 */  
+        }  
+        /* 分隔评论列表和添加评论的表单 */  
+        .comment-list {  
+            margin-bottom: 20px; /* 在评论列表下方添加一些间距 */  
+        }  
+          
+        .new-comment-section {  
+            border-top: 1px solid #ccc; /* 添加顶部边框 */  
+            padding-top: 20px; /* 在表单上方添加一些间距 */  
+        }
+        .comment-details {  
+            flex: 1;  
+        }  
+        .comment-header {  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+            margin-bottom: 5px;  
+        }  
+        .comment-revisions {  
+            margin-bottom: 5px;  
+        }  
+        
+    </style>   
+</head>  
+<body>  
+    <h1>{{name[0]}} 的 评论区</h1>  
+  
+       <!-- 显示评论列表 -->    
+       <h2>现有评论</h2>      
+       <ul class="comment-list">      
+           {% for comment in comments %}    
+           <li class="comment-container">    
+               <div class="comment-avatar">    
+                   <!-- 使用Jinja2的条件操作符来设置默认头像 -->  
+                   <a href="{{ url_for('userpage', username=comment.name) }}">  
+                    <img src="{{ comment.avatar }}" alt="User Avatar">   
+                   </a>
+               </div>    
+               <div class="comment-details">    
+                   <div class="comment-header">    
+                       <strong>Username: {{ comment.name }}</strong>  
+                   </div>    
+                   <div class="comment-revisions">    
+                       <p>{{ comment.revisions }}</p>    
+                   </div>    
+                   <div class="comment-time">    
+                       <p><small>Posted at: {{ comment.re_time }}</small></p>    
+                   </div>    
+               </div>    
+           </li>    
+           {% endfor %}  
+       </ul>      
+       <!-- 发表新评论的表单 -->  
+       <div class="new-comment-section"> <!-- 添加了新的div包裹表单，并使用类来样式化 -->  
+           <h2>添加评论:</h2>    
+           <form method="POST" action="{{ url_for('comments', topic_id=topic_id) }}">    
+               <div>    
+                   {% if session.get('username') %}    
+                       <label for="username">Username:</label>    
+                       <input type="text" id="username" name="username" value="{{ session.get('username') }}" readonly>  
+                   <!-- 这里缺少了闭合的</div>标签，已经添加 -->  
+                   </div>    
+                   <div>    
+                       <label for="comment_text">评论内容:</label>    
+                       <textarea id="comment_text" name="comment_text" rows="4" cols="50"></textarea>    
+                   </div>    
+                   <div>    
+                       <input type="submit" value="提交">    
+                   </div>    
+                   {% else %}    
+                   <div class="alert alert-warning" role="alert">    
+                       请先登录再评论    
+                   </div>    
+                   {% endif %}    
+               </form>    
+       </div> <!-- 闭合new-comment-section的div -->  
+   </body>
+</html>

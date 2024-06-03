@@ -1,0 +1,183 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>{{ title }}</title>  
+    <style>  
+        /* 初始隐藏表单 */  
+        #add-section-form {  
+            display: none;  
+        }  
+        /* 基础样式 */  
+        body {  
+            font-family: Arial, sans-serif;  
+            margin: 0;  
+            padding: 20px;  
+        }  
+
+        .section-title-marker {  
+            display: inline-block;  
+            width: 10px; /* 颜色块的宽度 */  
+            height: 20px; /* 颜色块的高度 */  
+            margin-right: 5px; /* 与标题文本之间的间距 */  
+            background-color: #f00; /* 颜色块的颜色 */  
+            vertical-align: middle; /* 垂直居中对齐 */  
+            /* 可以根据需要添加更多样式，比如圆角 */  
+        }  
+  
+        /* 章节标题样式 */  
+        .section-title {  
+            display: flex; /* 使用flex布局来放置颜色块和标题文本 */  
+            align-items: center; /* 垂直居中对齐 */  
+            margin-bottom: 10px; /* 与内容之间的间距 */  
+            margin-left: 0;  
+            padding-left: 0;  
+        }  
+        /* 标题样式 */  
+        h2, h3 {  
+            margin: 0 0 10px 0;  
+            color: #000; /* 黑色标题文本 */  
+            /* 如果需要，还可以添加边框、下划线等装饰 */  
+        }  
+        h1 {  
+            /* 如果有需要可以调整margin-bottom来控制与h3的间距 */  
+            margin-bottom: 30px; /* 假设您想要30像素的间距 */  
+        }  
+  
+        h4 {  
+            /* 添加缩进和首行缩进 */  
+            padding-left: 20px; /* 缩进 */  
+            text-indent: 1em; /* 首行缩进，通常为字体大小的倍数 */  
+            margin-top: 10px; /* 假设您想要10像素的额外间距 */  
+        }  
+        /* 段落样式 */  
+        p {  
+            margin: 0 0 15px 0;  
+            color: #000; /* 段落文本颜色 */  
+        }  
+  
+        /* 章节控制按钮样式 */  
+        .section-controls {  
+            display: flex;  
+            align-items: center; /* 垂直居中 */  
+            margin-top: 5px; /* 减小上边距 */  
+            font-size: 0.8em; /* 减小字体大小 */  
+        }  
+  
+        .section-controls a,  
+        .section-controls button {  
+            padding: 2px 5px; /* 减小内边距 */  
+            border: none;  
+            background-color: #f5f5f5; /* 更淡的灰色背景 */  
+            color: #999; /* 更淡的灰色文本 */  
+            text-decoration: none; /* 去除链接下划线 */  
+            cursor: pointer;  
+            transition: background-color 0.2s; /* 过渡效果 */  
+            font-size: 0.8em; /* 减小按钮内的字体大小 */  
+        }  
+  
+        .section-controls button {  
+            /* 如果有需要，可以为按钮添加更多样式 */  
+        }  
+  
+        .section-controls a:hover,  
+        .section-controls button:hover {  
+            background-color: #e5e5e5; /* 鼠标悬停时改变背景色 */  
+        }  
+  
+        /* 如果需要，可以给章节内容添加更多样式 */  
+        .section-content {  
+            border: 1px solid #eee; /* 添加边框 */  
+            padding: 0px; /* 添加内边距 */  
+            margin-bottom: 20px; /* 增加章节之间的间距 */  
+        }  
+        .enter-comments-btn{
+            padding: 10px 20px;   
+            border-radius: 5px;  
+            margin-top: 20px;  
+        }
+    </style>  
+</head>  
+<body>  
+    <h1>{{title}}</h1>   
+    <h4>{{introduction}}</h4>
+    <h2>词条详情</h2>  
+    <ul>
+    {% for section in sections %}  
+        <div class="section-content">  
+            <!-- 章节标题前的颜色块和标题 -->  
+            <div class="section-title">  
+                <div class="section-title-marker"></div>  
+                <h3>{{ section[2] }}</h3>  
+            </div>  
+            <p>{{ section[4] }}</p> <!-- 章节内容 -->  
+            {% if show %}  
+            <!-- 章节控制按钮 -->  
+            <div class="section-controls">  
+                <a href="{{ url_for('edit_section', section_id=section[0], topic_id=topicid) }}" class="edit-button">编辑</a>  
+            <button onclick="deleteSection(event, {{ section[0]|tojson|safe }}, {{ topicid|tojson|safe }})" class="delete-button">删除</button>  
+        </div>  
+        {% endif %}  
+    {% endfor %}  
+     </ul>  
+        <script>  
+          
+            // 删除章节的函数  
+            function deleteSection(event, sectionIndex, topicId) {  
+                event.preventDefault(); // 阻止默认的点击行为  
+                
+                // 构造DELETE请求的URL  
+                var deleteUrl = `/topic/${topicId}/delete_section/${sectionIndex}`;   
+                // 发送DELETE请求  
+                fetch(deleteUrl, {  
+                    method: 'DELETE'  
+                })  
+                .then(response => {  
+                    if (!response.ok) {  
+                        throw new Error('Failed to delete section');  
+                    }  
+                    return response.json();  
+                })  
+                .then(data => {  
+                    // 显示成功消息  
+                    alert(data.message);  
+                    // 这里可以添加代码来重新加载页面或更新UI  
+                    window.location.reload();  
+                })  
+                .catch(error => {  
+                    alert('Error deleting section: ' + error.message);  
+                    // 在这里处理错误，比如显示一个错误消息  
+                });  
+            }  
+        </script>      
+    {% if show %}  
+    <div class="section-controls">  
+    <button onclick="toggleForm()">添加章节</button>  
+    </div>
+    <div id="add-section-form">  
+        <form action="{{ url_for('add_section',topic_id=topicid) }}" method="post">    
+            <label for="section-title">章节标题:</label>    
+            <input type="text" id="section-title" name="title" placeholder="输入章节标题">    
+            <br>    
+            <label for="section-content">章节内容:</label>    
+            <textarea id="section-content" name="content" placeholder="输入章节内容"></textarea>       
+            <input type="submit" value="增加章节">    
+        </form>    
+    </div> 
+    {% endif %}  
+    <button onclick="location.href='{{ url_for('comments', topic_id=topicid) }}';"class="enter-comments-btn">  
+        <i class="arrow-right">→</i>  
+        进入评论区  
+    </button>
+    <script>  
+        // 切换表单显示状态的函数  
+        function toggleForm() {  
+            var form = document.getElementById('add-section-form');  
+            if (form.style.display === 'none') {  
+                form.style.display = 'block'; // 显示表单  
+            } else {  
+                form.style.display = 'none'; // 隐藏表单  
+            }  
+        }  
+    </script>  
+</body>    
+</html>

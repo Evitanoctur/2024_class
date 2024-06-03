@@ -1,0 +1,21 @@
+<!DOCTYPE html>  
+<html lang>  
+<head>  
+    <meta charset="UTF-8">  
+    <title>编辑部分</title>  
+</head>  
+<body>  
+    <h1>编辑部分</h1>  
+    <form method="post" action="{{ url_for('edit_section', topic_id=topic_id, section_id=section_id) }}">  
+        <div>  
+            <label for="new_title">标题:</label>  
+            <input type="text" name="new_title" id="new_title" value="{{ title }}">  
+        </div>  
+        <div>  
+            <label for="new_content">内容:</label>  
+            <textarea name="new_content" id="new_content" rows="10" cols="50">{{content}}</textarea>  
+        </div>  
+        <input type="submit" value="提交">  
+    </form>  
+</body>  
+</html>

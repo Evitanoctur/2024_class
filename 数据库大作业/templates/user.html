@@ -1,0 +1,61 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>用户信息页面</title>  
+</head>  
+<body>  
+    <h1>用户信息 - {{ username }}</h1>  
+    <img src="{{ avatar }}" alt="Avatar" width = "100px">
+    <p>签名：{{ signature }}</p>
+    <p>————我创建的 Wiki————</p>  
+        <ul>    
+            {% for wiki in user_wikis %}    
+                <li>  
+                    <a href="{{ url_for('topic_page', topic_id=wiki.topic_id) }}">{{ wiki.topic_name }}</a>  
+                    {% if show_form %} 
+                    <button class="delete-btn" onclick="deleteWiki({{ wiki.topic_id }})">删除</button>  
+                    {% endif %}  
+                </li>    
+            {% endfor %}    
+        </ul>  
+          
+        <!-- 添加一个用于弹出确认框的JavaScript函数 -->  
+        <script>  
+        function deleteWiki(topicId) {  
+            if (confirm('你确定要删除这个Wiki吗?')) {  
+                // 使用AJAX发送DELETE请求到后端  
+                // 这里只是一个示例，您可能需要使用jQuery或其他库来实现AJAX  
+                fetch(`/wiki/delete/${topicId}`, {  
+                    method: 'DELETE'  
+                }).then(response => {  
+                    if (response.ok) {  
+                        // 删除成功，更新页面  
+                        location.reload(); // 或者使用JavaScript来移除对应的列表项  
+                    } else {  
+                        alert('删除失败');  
+                    }  
+                });  
+            }  
+        }  
+        </script>
+    {% if show_form %} 
+    <p>————创建新的Wiki————</p>    
+    <p>  
+        <button onclick="location.href='{{ url_for('creat_newwiki', username=username) }}';">创建新的Wiki</button>  
+    </p>   
+    <p>————更改个人信息————</p>  
+    <br>
+    <form action="/user/{{ username }}" method="post" enctype="multipart/form-data">  
+        <label for="signature">签名:</label>  
+        <textarea id="signature" name="signature" rows="4" cols="50"></textarea><br><br>  
+        <label for="avatar">上传头像:</label>  
+        <input type="file" id="avatar" name="avatar" accept="image/*"><br><br>  
+    </form>  
+     <p>  
+        <button class="logout-btn" onclick="location.href='{{ url_for('logout') }}';">注销</button> 
+    </p>  
+    {% endif %}  
+</body>  
+</html>

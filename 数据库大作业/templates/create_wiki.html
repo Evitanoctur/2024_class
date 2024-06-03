@@ -1,0 +1,23 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <meta charset="UTF-8">  
+    <title>创建新 Wiki</title>  
+</head>  
+<body>  
+    <h1>创建新 Wiki</h1>  
+    <form method="post" action="{{ url_for('creat_newwiki', username=session.username) }}">  
+        <div>  
+            <label for="topic">Wiki 主题:</label>  
+            <input type="text" id="topic" name="topic" required>  
+        </div>  
+        <div>  
+            <label for="introduction">Wiki 介绍:</label>  
+            <textarea id="introduction" name="introduction" required></textarea>  
+        </div>  
+        <div>  
+            <button type="submit">创建 Wiki</button>  
+        </div>  
+    </form>  
+</body>  
+</html>

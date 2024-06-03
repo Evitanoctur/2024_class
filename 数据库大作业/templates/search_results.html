@@ -1,0 +1,47 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Search Wiki Results</title>  
+<style>  
+    .highlight {  
+        background-color: yellow; /* 或者其他你喜欢的颜色 */  
+    }
+</style>
+</head>  
+<body>  
+    <h1>Wiki Search Results</h1>  
+    <form action="{{ url_for('search_form') }}" method="get">  
+        <input type="text" name="q" value="{{ query|escape }}" placeholder="Search...">  
+        <button type="submit">Search</button>  
+    </form>  
+    <!-- 搜索结果 -->  
+    {% if has_results %}  
+    <!-- 这里可以显示你的结果列表，但由于你没有合并它们，你需要分别显示 -->  
+    <!-- 显示唯一的topic_name结果 -->  
+    <ul>  
+        {% for result in results_t %}  
+        <li>
+        <a href="{{ url_for('topic_page', topic_id=result.topic_id) }}" style="font-size: 1.5em;">{{ result.topic_name }}</a> <!-- 设置topic_name的字体大小 -->  
+        <p style="font-size: 1em;">introduction:{{ result.topic_introduction }}</p> 
+        </li>  
+        {% endfor %}  
+    </ul>  
+
+    <!-- 显示其他搜索结果 -->  
+    <ul>  
+        {% for result in results %}  
+        <li>  
+            <a href="{{ url_for('topic_page', topic_id=result.topic_id) }}" style="font-size: 1.5em;">{{ result.topic_name }}</a> <!-- 设置topic_name的字体大小 -->  
+            <p>  
+                <h3 style="font-size: 1em;">{{ result.topic_title or result.section_title|highlight(query) }}</h3> <!-- 设置标题的字体大小 -->  
+                <p style="font-size: 1em;">{{ result.topic_content or result.section_content|highlight(query)}}</p> <!-- 设置内容的字体大小 -->  
+            </p>  
+            <p style="font-size: 0.8em;">creator: {{ result.topic_creator|highlight(query)}}</p> <!-- 设置creator的字体大小 -->  
+        </li>  
+        {% endfor %}  
+    </ul>  
+{% else %}  
+    <p>No search results found.</p>  
+{% endif %}  
+</body>  
+</html>
